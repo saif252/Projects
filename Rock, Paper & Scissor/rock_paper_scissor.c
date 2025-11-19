@@ -10,11 +10,13 @@ int main()
     int win = 0, lost = 0, draw = 0;
     int total_games = 0;
 
-    srand(time(0)); // seed random number generator
+    char *moves[3] = {"rock", "paper", "scissors"};
+
+    srand(time(0)); // seed random generator
 
     while (1)
     {
-        printf("\nEnter rock, paper, scissor, stats, or stop: ");
+        printf("\nEnter rock, paper, scissors, stats, or stop: ");
         scanf("%s", player);
 
         // Stop game
@@ -41,66 +43,24 @@ int main()
 
         // Generate computer choice
         computer = rand() % 3;
+        printf("Computer chose: %s\n", moves[computer]);
 
-        // Show computer's move
-        if (computer == 0) printf("Computer chose: rock\n");
-        else if (computer == 1) printf("Computer chose: paper\n");
-        else printf("Computer chose: scissor\n");
-
-        // Compare outcomes
-        if (strcmp(player, "rock") == 0)
-        {
-            if (computer == 0) 
-            {
-                printf("Draw!\n"); 
-                draw++; 
-            }
-            else if (computer == 1) 
-            { 
-                printf("You lost :(\n"); 
-                lost++; 
-            }
-            else 
-            { 
-                printf("You win!\n"); 
-                win++; 
-            }
-        }
-        else if (strcmp(player, "paper") == 0)
-        {
-            if (computer == 1) 
-            { printf("Draw!\n"); draw++; }
-            else if (computer == 2) 
-            { 
-                printf("You lost :(\n"); 
-                lost++; 
-            }
-            else 
-            { 
-                printf("You win!\n"); 
-                win++; 
-            }
-        }
-        else if (strcmp(player, "scissor") == 0)
-        {
-            if (computer == 2) 
-            { 
-                printf("Draw!\n"); 
-                draw++; 
-            }
-            else if (computer == 0) 
-            { 
-                printf("You lost :(\n"); 
-                lost++; 
-            }
-            else 
-            { 
-                printf("You win!\n"); 
-                win++; 
-            }
-        }
-        else
-        {
+        // Determine outcome
+        if (strcmp(player, moves[computer]) == 0 ||
+            (strcmp(player, "scissor") == 0 && computer == 2)) {
+            printf("Draw!\n");
+            draw++;
+        } else if ((strcmp(player, "rock") == 0 && computer == 2) ||
+                   (strcmp(player, "paper") == 0 && computer == 0) ||
+                   (strcmp(player, "scissors") == 0 && computer == 1) ||
+                   (strcmp(player, "scissor") == 0 && computer == 1)) {
+            printf("You win!\n");
+            win++;
+        } else if (strcmp(player, "rock") == 0 || strcmp(player, "paper") == 0 || 
+                   strcmp(player, "scissors") == 0 || strcmp(player, "scissor") == 0) {
+            printf("You lost :(\n");
+            lost++;
+        } else {
             printf("Invalid input! Try again.\n");
         }
     }
