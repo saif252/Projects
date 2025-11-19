@@ -1,4 +1,4 @@
-# How to Play
+# Rock, Paper Scissors - How to Play
 
 Start the game – Run the program.
 
