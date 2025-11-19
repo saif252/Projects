@@ -1,24 +1,31 @@
-# Number Guessing Game – How to Play
-Overview
-
-This is a simple game where the computer thinks of a random number between 1 and 100, and your task is to guess it. The program will give hints to help you find the correct number.
-
-How to Play
+# How to Play
 
 Start the game – Run the program.
 
-See the prompt – The program will ask you to enter a number.
+Enter your move – Type one of the following:
 
-Enter your guess – Type a number between 1 and 100.
+"rock"
 
-If you type a number outside this range, the program will tell you it's invalid and ask again.
+"paper"
 
-Get hints – After each guess, the program will tell you:
+"scissors" (or "scissor")
 
-"Number is higher" → Your guess is too low.
+View stats – Type "stats" to see:
 
-"Number is lower" → Your guess is too high.
+Wins, losses, draws
 
-Repeat – Keep guessing until you find the correct number.
+Total games played
 
-Win – When you guess the correct number, the program will congratulate you and tell you how many attempts it took.
+Win percentage
+
+Stop the game – Type "stop" to exit the game.
+
+Game Rules
+
+Rock beats Scissors
+
+Scissors beats Paper
+
+Paper beats Rock
+
+If both you and the computer choose the same move, it’s a draw.
