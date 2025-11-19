@@ -1,1 +1,24 @@
+# Number Guessing Game – How to Play
+Overview
 
+This is a simple game where the computer thinks of a random number between 1 and 100, and your task is to guess it. The program will give hints to help you find the correct number.
+
+How to Play
+
+Start the game – Run the program.
+
+See the prompt – The program will ask you to enter a number.
+
+Enter your guess – Type a number between 1 and 100.
+
+If you type a number outside this range, the program will tell you it's invalid and ask again.
+
+Get hints – After each guess, the program will tell you:
+
+"Number is higher" → Your guess is too low.
+
+"Number is lower" → Your guess is too high.
+
+Repeat – Keep guessing until you find the correct number.
+
+Win – When you guess the correct number, the program will congratulate you and tell you how many attempts it took.
