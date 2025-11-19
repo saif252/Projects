@@ -304,10 +304,70 @@ void delete()
     printf("Account successfully removed.\n");
 }
 
-
 void deposit()
 {
+    details account;
+    int pin;
+    float amount;
+    char filename[100];
 
+    printf("\n        Depositing      \n");
+    printf("-----------------------------\n");
+
+    printf("Enter Account Number: ");
+    scanf("%d", &account.acc_number);
+
+    sprintf(filename, "database/%d.txt", account.acc_number);
+
+    FILE *fp = fopen(filename, "r");
+    if (!fp)
+    {
+        printf("Account not found!\n");
+        return;
+    }
+
+    fscanf(fp, "%[^\n]\n", account.name);      // Name 
+    fscanf(fp, "%d\n", &account.ID);          // ID
+    fscanf(fp, "%d\n", &account.type);        // Type
+    fscanf(fp, "%d\n", &account.PIN);         // PIN
+    fscanf(fp, "%d\n", &account.acc_number);  // Account number
+    fscanf(fp, "%f\n", &account.balance);     // Balance
+
+    fclose(fp);
+
+    printf("Enter 4-digit PIN: ");
+    scanf("%d", &pin);
+
+    if (pin != account.PIN)
+    {
+        printf("Incorrect PIN!\n");
+        return;
+    }
+
+    printf("Enter deposit amount (RM): ");
+    scanf("%f", &amount);
+
+    if (amount <= 0 || amount > 50000)
+    {
+        printf("Invalid amount. Must be >0 and <=50000.\n");
+        return;
+    }
+
+    account.balance += amount;
+
+    fp = fopen(filename, "w");
+
+    fprintf(fp, "%s\n", account.name);
+    fprintf(fp, "%d\n", account.ID);
+    fprintf(fp, "%d\n", account.type);
+    fprintf(fp, "%d\n", account.PIN);
+    fprintf(fp, "%d\n", account.acc_number);
+    fprintf(fp, "%.2f\n", account.balance);
+
+    fclose(fp);
+
+    printf("\nDeposit successful\n");
+    printf("New Balance: RM%.2f\n", account.balance);
 }
 
 void withdraw()
