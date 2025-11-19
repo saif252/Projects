@@ -158,7 +158,7 @@ void create_new_account()
         if (new_account.PIN >= 1000 && new_account.PIN <= 9999)
             pin_is_valid = 1;
         else
-            printf("PIN must be exactly 4 digits (1000-9999).\n");
+            printf("PIN must be exactly 4 digits\n");
     }
 
     // Start with zero balance
@@ -403,7 +403,7 @@ void make_withdrawal()
     printf("Withdrawal feature coming soon!\n");
 }
 
-void transfer_money()
+void remittance()
 {
     // TODO: Implement remittance functionality
     printf("Money transfer feature under development!\n");
@@ -430,7 +430,7 @@ void display_main_menu()
         printf("2. Delete Existing Account\n");
         printf("3. Make Deposit\n");
         printf("4. Make Withdrawal\n");
-        printf("5. Transfer Money\n");
+        printf("5. Remittance Abroad\n");
         printf("6. Exit System\n");
         printf("-----------------------------------\n");
         printf("\n");
@@ -463,7 +463,7 @@ void display_main_menu()
         else if ( strcmp(user_input, "5") == 0 || strcmp(user_input, "remittance") == 0 || strcmp(user_input, "transfer") == 0 )
         {
             transactionlog("Remittance");
-            transfer_money();
+            Remittance();
         }
         else if ( strcmp(user_input, "6") == 0 || strcmp(user_input, "quit") == 0 || strcmp(user_input, "exit") == 0 )
         {
