@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
+#include <stdlib.h>
 
 void folder()
 {
@@ -41,26 +42,83 @@ void session_info()
     printf("-----------------------------------\n");
 }
 
-void menu()
+void create()
 {
-    printf("\n");
-    printf("        Welcome To Bank     \n");
-    printf("-----------------------------------\n");
-    printf("Please Choose An Option\n");
-    printf("1. Create New Bank Account\n");
-    printf("2. Delete Bank Account \n");
-    printf("3. Deposit\n");
-    printf("4. Withdrawal\n");
-    printf("5. Remittance\n");
-    printf("6. Quit\n");
-    printf("-----------------------------------\n");
 
-    char input[10];
-    printf("Select Option: ");
-    scanf("")
 }
 
+void delete()
+{
 
+}
+
+void deposit()
+{
+
+}
+
+void withdraw()
+{
+
+}
+
+void remittance()
+{
+    
+}
+
+void menu()
+{
+    char input[10];
+    
+    while(1)
+    {
+        printf("        Welcome To Bank     \n");
+        printf("-----------------------------------\n");
+        printf("Please Choose An Option\n");
+        printf("1. Create New Bank Account\n");
+        printf("2. Delete Bank Account \n");
+        printf("3. Deposit\n");
+        printf("4. Withdrawal\n");
+        printf("5. Remittance\n");
+        printf("6. Quit\n");
+        printf("-----------------------------------\n");
+        printf("\n");
+        
+        printf("Select Option: ");
+        scanf("%s", input);
+
+        if( strcmp(input, "1") == 0 || strcmp(input, "create") == 0 )
+        {
+            create();
+        }
+        else if ( strcmp(input, "2") == 0 || strcmp(input, "delete") == 0 )
+        {
+            delete();
+        }
+        else if ( strcmp(input, "3") == 0 || strcmp(input, "deposit") == 0 )
+        {
+            deposit();
+        } 
+        else if ( strcmp(input, "4") == 0 || strcmp(input, "withdraw") == 0 )
+        {
+            withdraw();
+        } 
+        else if ( strcmp(input, "5") == 0 || strcmp(input, "remittance") == 0 )
+        {
+            remittance();
+        }
+        else if ( strcmp(input, "6") == 0 || strcmp(input, "quit") == 0 )
+        {
+            printf("Qitted Successfully\n");
+            exit(0);
+        }
+        else 
+        {
+            printf("Invalid Input\n");
+        }
+    }
+}
 
 int main()
 {
