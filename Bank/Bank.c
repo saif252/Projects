@@ -11,6 +11,7 @@ typedef struct acc_details
     int ID;
     int acc_number;
     int type;
+    int PIN;
     float balance;
 } details;
 
@@ -86,24 +87,70 @@ void create()
     printf("-----------------------------------\n");
     printf("Name: ");
     while (getchar() != '\n');
-    scanf("%s", account.name);
+    fgets(account.name, sizeof(account.name), stdin);
+    account.name[strcspn(account.name, "\n")] = '\0';
 
-    while (getchar() != '\n');
-    printf("ID: ");
-    scanf("%d", &account.ID);
+    int valid_ID = 0;
+    while (valid_ID != 1)
+    {
+        printf("ID (Digits): ");
+        if (scanf("%d", &account.ID) != 1)
+        {
+            printf("Invalid input. Numbers only.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+        while (getchar() != '\n');
+        valid_ID = 1;
+    }
 
-    printf("Account Type: ");
-    scanf("%d", &account.type);
+    
+    int valid_Type = 0;
+    while (!valid_Type)
+    {
+        printf("Account Type (1 = Saving, 2 = Current): ");
+        if (scanf("%d", &account.type) != 1)
+        {
+            printf("Invalid input. Numbers only.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+    if (account.type == 1 || account.type == 2)
+    {
+        valid_Type = 1;
+    }
+    else
+    {
+        printf("Account Type must be 1 or 2.\n");
+    }
+    }
+
+    int valid_PIN = 0;
+    while (!valid_PIN)
+    {
+        printf("PIN (4 digits): ");
+        if (scanf("%d", &account.PIN) != 1)
+        {
+            printf("Invalid input. Numbers only.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        if (account.PIN >= 1000 && account.PIN <= 9999)
+        valid_PIN = 1;
+        else
+        printf("PIN must be exactly 4 digits.\n");
+    }
 
     account.balance = 0.0;
 
     srand(time(NULL));
     account.acc_number = 1000000 + rand() % 9000000;
 
-
+    printf("\n");
     printf("-----------------------------------\n");
-
-    printf("            Account Information        \n");
+    printf("       Account Information        \n");
     printf("-----------------------------------\n");
     printf("Name: %s\n", account.name);
     printf("ID: %d\n", account.ID);
@@ -158,44 +205,44 @@ void menu()
 
         if( strcmp(input, "1") == 0 || strcmp(input, "create") == 0 )
         {
-            create();
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Create");
+            fprintf(transaction, "Create\n");
             fclose(transaction);
+            create();
         }
         else if ( strcmp(input, "2") == 0 || strcmp(input, "delete") == 0 )
         {
-            delete();
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Delete");
+            fprintf(transaction, "Delete\n");
             fclose(transaction);
+            delete();
         }
         else if ( strcmp(input, "3") == 0 || strcmp(input, "deposit") == 0 )
         {
-            deposit();
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Deposit");
+            fprintf(transaction, "Deposit\n");
             fclose(transaction);
+            deposit();
         } 
         else if ( strcmp(input, "4") == 0 || strcmp(input, "withdraw") == 0 )
         {
-            withdraw();
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Withdraw");
+            fprintf(transaction, "Withdraw\n");
             fclose(transaction);
+            withdraw();
         } 
         else if ( strcmp(input, "5") == 0 || strcmp(input, "remittance") == 0 )
         {
-            remittance();
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Remittance");
+            fprintf(transaction, "Remittance\n");
             fclose(transaction);
+            remittance();
         }
         else if ( strcmp(input, "6") == 0 || strcmp(input, "quit") == 0 )
         {
             printf("Qitted Successfully\n");
             FILE *transaction = fopen("database/Transaction.log", "a");
-            fprintf(transaction, "Quit");
+            fprintf(transaction, "Quit\n");
             fclose(transaction);
             exit(0);
         }
