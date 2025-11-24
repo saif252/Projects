@@ -14,6 +14,7 @@ typedef struct account_details
     int acc_no;
 }acc_details;
 
+// Makes Database Folder
 void make_database()
 {
     // Creates the files in Current working Directory
