@@ -3,43 +3,37 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include <unistd.h>
+#include <libgen.h>
 //#include <direct.h>
 
-/*
-void database()
-{
-    // Makes Database Directory
-    const char database_path[1024] = "Database";
-    _mkdir(database_path);
-
-    // Makes index.txt file
-    const char indexfile_path[1024] = "Database/Index.txt";
-    FILE *indexptr;
-    indexptr = fopen(indexfile_path, "a");
-    fclose(indexptr);
-
-    // Makes transaction.log file
-    const char transactionfile_path[1024] = Database/Transaction.log;
-    FILE *transactionptr;
-    transactionptr = fopen(transactionfile_path, "a");
-    fclose(transactionptr);
-}
-*/
 
 void database()
 {
+    char exe_path[1024];
+    get_executable_directory(NULL, exe_path, 1024);
+
     // Makes Database Directory
-    const char database_path[1024] = "Database";
+    char database_path[1024];
+    strcpy(database_path, exe_path);
+    strcat(database_path, "/Database");
     mkdir(database_path, 0755);
 
+
     // Makes index.txt file
-    const char indexfile_path[1024] = "Database/Index.txt";
+    char indexfile_path[1024];
+    strcpy(indexfile_path, database_path);
+    strcat(indexfile_path, "/index.txt");
+
     FILE *indexptr;
     indexptr = fopen(indexfile_path, "a");
     fclose(indexptr);
 
     // Makes transaction.log file
-    char transactionfile_path[1024] = "Database/Transaction.log";
+    char transactionfile_path[1024];
+    strcpy(transactionfile_path, database_path);
+    strcat(transactionfile_path, "/Transactranstion.log");
+
     FILE *transactionptr;
     transactionptr = fopen(transactionfile_path, "a");
     fclose(transactionptr);
@@ -58,7 +52,7 @@ void show_session_info()
     // Count number of account by counting the number of lines in index.txt
     FILE *indexptr;
     indexptr = fopen("Database/Index.txt", "r");
-    int acc_count = 1;
+    int acc_count = 0;  // ------------------------- FIX THIS ISSUE------------------------------------
     int end = fgetc(indexptr); // Reads the line
     
     while (end != EOF) // Loops through the files until End of the file
@@ -79,15 +73,29 @@ void show_session_info()
     printf("-------------------------------\n");
 }
 
+// Acts as the main menu to take the the user input
+void main_menu()
+{
+    // Calls session_info Function here rather than main to show info everytime at the start
+    show_session_info();
 
+    printf("            Welcome To Bank         \n");
+    printf("------------------------------------\n");
+
+
+
+
+
+    printf("------------------------------------\n");
+}
 
 int main()
 {
-    // Calls session_info Function
-    show_session_info();
-
     // Call database Function
     database();
+
+    // Call main_menu function
+    main_menu();
 
     return 0;
 }
