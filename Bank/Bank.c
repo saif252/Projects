@@ -437,11 +437,13 @@ void Transactionlog_update(const char *action)
     // Gets the current directory and stores the location in current_location
     char current_directory[1024];
     getcwd(current_directory, 1024);
-    
+
+    // Creates the file location for transaction.log
     char Transactionfile_path[1024];
     strcpy(Transactionfile_path, current_directory);
     strcat(Transactionfile_path, "/Database/Transaction.log");
 
+    // Open Transraction.log and updates it
     FILE *Transactionptr;
     Transactionptr = fopen(Transactionfile_path, "a");
     fprintf(Transactionptr, "%s\n", action);
