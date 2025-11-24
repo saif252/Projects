@@ -240,8 +240,181 @@ void Create()
 
 void Delete()
 {
-    printf("Deleting Bank Account\n");
+    printf("\n      Deleting Bank Account       \n");
+    printf("------------------------------------\n");
+
+    printf("        Existing Account:\n");
+
+    // Gets Current Directory address to access Index.txt
+    char current_directory_read[1024];
+    getcwd(current_directory_read, 1024);
+
+    // Open Index.txt
+    char Indexfile_read_path[1024];
+    strcpy(Indexfile_read_path, current_directory_read);
+    strcat(Indexfile_read_path, "/Database/Index.txt");
+    
+    char file_end[1024]; // Reads the File for end
+    char existing_account[1024][8]; // 2D array to store 1024 Accounts of 7 Characters + Null terminator
+    int account_count = 0; // Numberes the Accounts (1. XXXXXXX)
+
+    FILE *index_read_ptr;
+    index_read_ptr = fopen(Indexfile_read_path, "r");
+
+    // Loop to Read and Display all the current Acccount
+    while (fgets(file_end, 1024, index_read_ptr) != NULL) // Runs until the Files is empty
+    {
+        file_end[strcspn(file_end, "\n")] = 0; // Removes the newline Character
+        strcpy(existing_account[account_count], file_end);
+        printf("%d. %s\n", account_count + 1, existing_account[account_count]);
+        account_count++;
+    }
+    fclose(index_read_ptr);
+    printf("------------------------------------\n");
+    
+    int account_found = 0;
+    char account_delete[10];
+    while (!account_found)
+    {
+        printf("Please Select Account to delete: ");
+        scanf("%s", account_delete);
+
+        for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
+        {
+            if (strcmp(account_delete, existing_account[i]) == 0) // If the account matches; breaks
+            {
+                account_found = 1;
+            }
+        }
+        if (!account_found) // If didnt find account in existing_account array
+        {
+            printf("Account Not Found\n");
+        }
+    }
+
+    // Gets Current Directory address to access account.txt
+    char current_directory_delete[1024];
+    getcwd(current_directory_delete, 1024);
+
+    // Open the Account file for Verifications- ID & PIN
+    char Accountfile_path[1024];
+    strcpy(Accountfile_path, current_directory_read);
+    sprintf(Accountfile_path, "%s/Database/%s.txt", current_directory_delete, account_delete);
+    
+    FILE *accountfile;
+    accountfile = fopen(Accountfile_path, "r");
+
+    acc_details account_info;
+    fgets(account_info.name, 1024, accountfile); // reads the names of the account name
+    account_info.name[strcspn(account_info.name, "\n")] = '\0'; // Removes the newline character
+
+    // Reads information the Account Files and Stores in struct
+    fscanf(accountfile, "%d", &account_info.ID);
+    fscanf(accountfile, "%d", &account_info.acc_type);
+    fscanf(accountfile, "%d", &account_info.PIN);
+    fscanf(accountfile, "%f", &account_info.Balance);
+    fscanf(accountfile, "%d", &account_info.acc_no);
+    fclose(accountfile);
+
+    account_info.ID = account_info.ID % 10000; // Extracts the last 4 digits. 1234567 % 10000 ----> 4567
+    // Checks the Last 4 digits of the ID
+    int user_ID;
+    while(1)
+    {
+        printf("ID (Last 4 Digits): ");
+        
+        if (scanf("%d", &user_ID) == 1) // Checks the ID is Integer
+        {
+            if (user_ID >= 1000 && user_ID <= 9999) // Ensures the input is 4 digits
+            {
+                if (user_ID == account_info.ID) // If the 4 digits of input and account ID matches, breaks the inifinte loop
+                {
+                    break;
+                }
+                else
+                {
+                    printf("Invalid ID\n");
+                }
+            }
+            else
+            {
+                int clear;
+                while ((clear = getchar()) != '\n' && clear != EOF); //Remove Characters 
+                printf("Must 4 digits\n");
+            }
+        }
+        else
+        {
+            int clear;
+            while ((clear = getchar()) != '\n' && clear != EOF); //Remove Characters 
+            printf("Must Numbers\n");
+        }
+    }
+
+    // Checks the PIN - Same as ID but just changed the name and less hassle
+    int user_PIN;
+    while(1)
+    {
+        printf("PIN: ");
+        
+        if (scanf("%d", &user_PIN) == 1) // Checks the PIN is Integer
+        {
+            if (user_PIN >= 1000 && user_PIN <= 9999) // Ensures the input is 4 digits
+            {
+                if (user_PIN == account_info.PIN) // If the 4 digits of input and account ID matches, breaks the inifinte loop
+                {
+                    break;
+                }
+                else
+                {
+                    printf("Invalid PIN\n");
+                }
+            }
+            else
+            {
+                int clear;
+                while ((clear = getchar()) != '\n' && clear != EOF); //Remove Characters 
+                printf("Must 4 digits\n");
+            }
+        }
+        else
+        {
+            int clear;
+            while ((clear = getchar()) != '\n' && clear != EOF); //Remove Characters 
+            printf("Must Numbers\n");
+        }
+    }
+
+    // Delete the Account File
+    if (remove(Accountfile_path) == 0) 
+    {
+        printf("Account %s deleted\n", account_delete);
+    } 
+    else 
+    {
+        printf("Error: Could not delete account file.\n");
+        return;
+    }
+
+    // Remove from Index.txt
+    char Indexfile_delete_path[1024];
+    strcpy(Indexfile_delete_path, current_directory_read);
+    strcat(Indexfile_delete_path, "/Database/Index.txt");
+    FILE *index_delete;
+    index_delete = fopen("database/index.txt", "w"); // Oveerwrites all the existing account
+
+    // For loop checks to write all accounts except the account deleted
+    for (int i = 0; i < account_count; i++) 
+    {
+        if (strcmp(existing_account[i], account_delete) != 0) // if the account to to be deleted and existing account acounts are different, writes back to index
+        {
+            fprintf(index_delete, "%s\n", existing_account[i]);
+        }
+    }
+
+    fclose(index_delete);
 }
+
 
 void Deposit()
 {
