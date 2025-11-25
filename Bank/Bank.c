@@ -39,7 +39,8 @@ void clear_input() {
 // Makes Database Folder, Index.txt and Transaction.log
 void make_database()
 {
-    char *current_directory = current_working_directory(); // Location of current Directory
+    char current_directory[1024];
+     strcpy(current_directory, current_working_directory()); // Location of current Directory
 
     // Makes Database Directory in current directory
     char database_path[1024];
@@ -107,7 +108,8 @@ void show_session_info()
 void Transactionlog_update(const char *action)
 {
     // Gets the current directory and stores the location in current_location
-    char *current_directory = current_working_directory();
+    char current_directory[1024];
+    strcpy(current_directory, current_working_directory());
     
     char Transactionfile_path[1024];
     path_builder(Transactionfile_path, "Transaction.log");
@@ -127,7 +129,6 @@ void Create()
 
     // Name
     printf("Enter Name: ");
-    clear_input();
     fgets(account.name, sizeof(account.name), stdin); // Takes Multi-line input from User
     account.name[strcspn(account.name, "\n")] = '\0'; //  Removes the newline character
 
@@ -149,9 +150,9 @@ void Create()
         } 
         else // Prints When input is not a number
         {
-            clear_input();
             printf("Invalid input. ID must be a number.\n");
         }
+        clear_input();
     }
 
     // Account Type - Same logic as ID
@@ -227,7 +228,8 @@ void Create()
     }
 
     // Append the Account Number to Index.txt
-    char *current_directory = current_working_directory();
+    char current_directory[1024]; 
+    strcpy(current_directory, current_working_directory());
 
     FILE *Index_append_ptr;
     Index_append_ptr = fopen(Indexfile_path, "a");
@@ -273,7 +275,8 @@ void Delete()
     printf("        Existing Account:\n");
 
     // Gets Current Directory address to access Index.txt
-    char *current_directory = current_working_directory();
+    char current_directory[1024];
+    strcpy(current_directory, current_working_directory());
 
     // Open Index.txt
     char Indexfile_read_path[1024];
@@ -322,7 +325,6 @@ void Delete()
 
     // Open the Account file for Verifications- ID & PIN
     char Accountfile_path[1024];
-    strcpy(Accountfile_path, current_directory);
     sprintf(Accountfile_path, "%s/Database/%s.txt", current_directory, account_delete);
     
     FILE *accountfile;
@@ -442,10 +444,11 @@ void Deposit()
     printf("\n              Deposit             \n");
     printf("------------------------------------\n");
 
-    printf("        Existing Account:\n");
+    printf("        Existing Account:           \n");
 
     // Gets Current Directory address to access Index.txt
-    char *current_directory = current_working_directory();
+    char current_directory[1024];
+    strcpy(current_directory, current_working_directory());
 
     // Open Index.txt
     char Indexfile_read_path[1024];
@@ -549,22 +552,28 @@ void Deposit()
     {
         printf("Enter Amount to Deposit: ");
         if (scanf("%f", &amount_deposit) == 1) // Checks if the input is numberes or character
-        {
-            if (amount_deposit > 0 && amount_deposit <= 50000) // Verifies the amount is between 0-50000
+        {   
+            if (amount_deposit > 0) // Ensures the number is positve
             {
-                amount_valid = 1;
+                if (amount_deposit > 0 && amount_deposit <= 50000) // Verifies the amount is between 0-50000
+                {
+                    amount_valid = 1;
+                }
+                else
+                {
+                    printf("Amount Must be > 0 and <= 50000\n");
+                }
             }
             else
             {
-                clear_input();
-                printf("Amount Must be > 0 and <= 50000\n");
+                printf("Amount Can't be Negative\n");
             }
         }
         else
         {
-            clear_input();
             printf("Amount Must be Numbers\n");
         }
+        clear_input();
     }
     
     account_info.Balance += amount_deposit; // Adds the current balance and amount entered by user 
@@ -609,18 +618,18 @@ void Withdrawal()
     char existing_account[1024][16]; // 2D array to store 1024 Accounts of 7 Characters + Null terminator
     int account_count = 0;
 
-    FILE *index_read_ptr;
-    index_read_ptr = fopen(Indexfile_read_path, "r");
+    FILE *index_ptr;
+    index_ptr = fopen(Indexfile_read_path, "r");
 
     // Loop to Read and Display all the current Acccount
-    while (fgets(file_end, sizeof(file_end), index_read_ptr) != NULL) // Runs until the Files is empty
+    while (fgets(file_end, sizeof(file_end), index_ptr) != NULL) // Runs until the Files is empty
     {
         file_end[strcspn(file_end, "\n")] = 0; // Removes the newline Character
         strcpy(existing_account[account_count], file_end);
         printf("%d. %s\n", account_count + 1, existing_account[account_count]);
         account_count++;
     }
-    fclose(index_read_ptr);
+    fclose(index_ptr);
     printf("--------------------------------\n");
 
     // Continue Prompt to Enter Correct Account
@@ -708,14 +717,22 @@ void Withdrawal()
         printf("Enter Amount to Withdraw: ");
         if (scanf("%f", &amount_withdraw) == 1)
         {
-            if (amount_withdraw <= account_info.Balance)
+            if (amount_withdraw > 0) // Valid the amount cant be negative
             {
-                amount_valid = 1;
+                if (amount_withdraw <= account_info.Balance) // Ensures the amount to withdraw is than the account balance
+                {
+                    amount_valid = 1;
+                }
+                else
+                {
+                    printf("Not Enough Balance\n");
+                }
             }
             else
             {
-                printf("Not Enough Balance\n");
+                printf("Amount Can't be Negative\n");
             }
+            
         }
         else
         {
@@ -747,7 +764,57 @@ void Withdrawal()
 
 void Remittance()
 {
-    printf("Remittance money\n");
+    printf("\n            Remittance        \n");
+    printf("--------------------------------\n");
+    // Show Existing Account
+    printf("        Existing Account:       \n");
+    // Gets Current Directory address to access Index.txt
+    char current_directory[1024];
+    strcpy(current_directory, current_working_directory());
+
+    // Open Index.txt
+    char Indexfile_read_path[1024];
+    path_builder(Indexfile_read_path, "Index.txt");
+    
+    char file_end[16]; // Reads the File for end
+    char existing_account[1024][16]; // 2D array to store 1024 Accounts of 7 Characters + Null terminator
+    int account_count = 0;
+
+    FILE *index_read_ptr;
+    index_read_ptr = fopen(Indexfile_read_path, "r");
+
+    // Loop to Read and Display all the current Acccount
+    while (fgets(file_end, sizeof(file_end), index_read_ptr) != NULL) // Runs until the Files is empty
+    {
+        file_end[strcspn(file_end, "\n")] = 0; // Removes the newline Character
+        strcpy(existing_account[account_count], file_end);
+        printf("%d. %s\n", account_count + 1, existing_account[account_count]);
+        account_count++;
+    }
+    fclose(index_read_ptr);
+    printf("--------------------------------\n");
+
+    // Continue Prompt to Enter Correct Account
+    int account_found = 0;
+    char account_deposit[16];
+    while (!account_found)
+    {
+        printf("Please Select Account to Withdraw: ");
+        scanf("%15s", account_deposit);
+
+        for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
+        {
+            if (strcmp(account_deposit, existing_account[i]) == 0) // If the account matches; breaks
+            {
+                account_found = 1;
+            }
+        }
+        if (!account_found) // If didnt find account in existing_account array
+        {
+            printf("Account Not Found\n");
+        }
+        clear_input();
+    }
 }
 
 
@@ -822,6 +889,7 @@ void main_menu()
             printf("Invalid Input. Please Try Again\n");
         }
     }
+    clear_input();
 }
 
 
