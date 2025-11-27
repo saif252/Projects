@@ -129,7 +129,7 @@ void Create()
 
     // Name
     printf("Enter Name: ");
-    fgets(account.name, sizeof(account.name), stdin); // Takes Multi-line input from User
+    fgets(account.name, sizeof(account.name), stdin); // Takes input from User even spaces
     account.name[strcspn(account.name, "\n")] = '\0'; //  Removes the newline character
 
     // ID
@@ -222,7 +222,6 @@ void Create()
                 unique_acc = 0;
                 break; // Breaks and generates a new number
             }
-            clear_input();
         }
         fclose(Indexptr);
     }
@@ -266,6 +265,57 @@ void Create()
     printf("------------------------------------\n");
 }
 
+int valid_PIN(const char *account_no)
+{
+    acc_details account;
+    char Account_path[1024];
+    snprintf(Account_path, 1024, "%s/Database/%s.txt", current_working_directory() ,account_no);
+
+    FILE *accountfile;
+    accountfile = fopen(Account_path, "r");
+    
+
+    fgets(account.name, sizeof(account.name), accountfile);  // read full name line
+    fscanf(accountfile, "%d", &account.ID);
+    fscanf(accountfile, "%d", &account.acc_type);
+    fscanf(accountfile, "%d", &account.PIN);
+    fscanf(accountfile, "%f", &account.Balance);
+    fscanf(accountfile, "%d", &account.acc_no);
+
+    fclose(accountfile);
+
+    int user_PIN;
+    while(1)
+    {
+        printf("PIN: ");
+        
+        if (scanf("%d", &user_PIN) == 1) // Checks the PIN is Integer
+        {
+            if (user_PIN >= 1000 && user_PIN <= 9999) // Ensures the input is 4 digits
+            {
+                if (user_PIN == account.PIN) // If the 4 digits of input and account ID matches, breaks the inifinte loop
+                {
+                    break;
+                }
+                else
+                {
+                    printf("Invalid PIN\n");
+                }
+            }
+            else
+            {
+                printf("Must 4 digits\n");
+            }
+        }
+        else
+        {
+            printf("Must Numbers\n");
+        }
+        clear_input();
+    }
+    return user_PIN;
+}
+
 // Delete Existing Bank Account
 void Delete()
 {
@@ -306,7 +356,6 @@ void Delete()
     {
         printf("Please Select Account to delete: ");
         scanf("%15s", account_delete);
-        clear_input();
 
         for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
         {
@@ -376,35 +425,7 @@ void Delete()
     }
 
     // Checks the PIN - Same as ID but just changed the name and less hassle
-    int user_PIN;
-    while(1)
-    {
-        printf("PIN: ");
-        
-        if (scanf("%d", &user_PIN) == 1) // Checks the PIN is Integer
-        {
-            if (user_PIN >= 1000 && user_PIN <= 9999) // Ensures the input is 4 digits
-            {
-                if (user_PIN == account_info.PIN) // If the 4 digits of input and account ID matches, breaks the inifinte loop
-                {
-                    break;
-                }
-                else
-                {
-                    printf("Invalid PIN\n");
-                }
-            }
-            else
-            {
-                printf("Must 4 digits\n");
-            }
-        }
-        else
-        {
-            printf("Must Numbers\n");
-        }
-        clear_input();
-    }
+    int user_PIN = valid_PIN(account_delete);
 
     // Delete the Account File
     if (remove(Accountfile_path) == 0) 
@@ -440,6 +461,7 @@ void Delete()
 void Deposit()
 {
     acc_details account_info;
+
     // Copied from Delete Function to Display the Existing Accounts
     printf("\n              Deposit             \n");
     printf("------------------------------------\n");
@@ -491,59 +513,25 @@ void Deposit()
             printf("Account Not Found\n");
         }
         clear_input();
-    } 
+    }
 
+    // Read the Account File
+    char accountpath[1024];
+    snprintf(accountpath, 1024, "%s/Database/%s.txt", current_directory, account_deposit);
+
+    FILE *account;
+    account = fopen(accountpath, "r");
+    fgets(account_info.name, sizeof(account_info.name), account);
+account_info.name[strcspn(account_info.name, "\n")] = '\0';
+    fscanf(account, "%d", &account_info.ID);
+    fscanf(account, "%d", &account_info.acc_type);
+    fscanf(account, "%d", &account_info.PIN);
+    fscanf(account, "%f", &account_info.Balance);
+    fscanf(account, "%d", &account_info.acc_no);
+    fclose(account);
 
     // Open the Account file for Verifications- PIN
-    char Accountfile_path[1024];
-    sprintf(Accountfile_path, "%s/Database/%s.txt", current_directory, account_deposit);
-
-    FILE *accountfile;
-    accountfile = fopen(Accountfile_path, "r");
-
-    
-    fgets(account_info.name, 1024, accountfile); // reads the names of the account name
-    account_info.name[strcspn(account_info.name, "\n")] = '\0'; // Removes the newline character
-
-    // Reads information the Account Files and Stores in struct
-    fscanf(accountfile, "%d", &account_info.ID);
-    fscanf(accountfile, "%d", &account_info.acc_type);
-    fscanf(accountfile, "%d", &account_info.PIN);
-    fscanf(accountfile, "%f", &account_info.Balance);
-    fscanf(accountfile, "%d", &account_info.acc_no);
-    fclose(accountfile);
-
-    // Checks the PIN
-    int user_PIN;
-    while(1)
-    {
-        printf("PIN: ");
-        
-        if (scanf("%d", &user_PIN) == 1) // Checks the PIN is Integer
-        {
-            if (user_PIN >= 1000 && user_PIN <= 9999) // Ensures the input is 4 digits
-            {
-                if (user_PIN == account_info.PIN) // If the 4 digits of input and account ID matches, breaks the inifinte loop
-                {
-                    break;
-                    
-                }
-                else
-                {
-                    printf("Invalid PIN\n");
-                }
-            }
-            else
-            {
-                printf("Must 4 digits\n");
-            }
-        }
-        else
-        {
-            printf("PIN must be Numbers\n");
-        }
-        clear_input();
-    }
+    int user_PIN = valid_PIN(account_deposit);
 
     //Takes the input for Balance
     int amount_valid = 0;
@@ -634,15 +622,15 @@ void Withdrawal()
 
     // Continue Prompt to Enter Correct Account
     int account_found = 0;
-    char account_deposit[16];
+    char account_withdraw[16];
     while (!account_found)
     {
-        printf("Please Select Account to Deposit: ");
-        scanf("%15s", account_deposit);
+        printf("Please Select Account to Withdraw: ");
+        scanf("%15s", account_withdraw);
 
         for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
         {
-            if (strcmp(account_deposit, existing_account[i]) == 0) // If the account matches; breaks
+            if (strcmp(account_withdraw, existing_account[i]) == 0) // If the account matches; breaks
             {
                 account_found = 1;
             }
@@ -653,58 +641,22 @@ void Withdrawal()
         }
         clear_input();
     }
+    char accountpath[1024];
+    snprintf(accountpath, 1024, "%s/Database/%s.txt", current_directory, account_withdraw);
+
+    FILE *account;
+    account = fopen(accountpath, "r");
+    fgets(account_info.name, sizeof(account_info.name), account);
+account_info.name[strcspn(account_info.name, "\n")] = '\0';
+    fscanf(account, "%d", &account_info.ID);
+    fscanf(account, "%d", &account_info.acc_type);
+    fscanf(account, "%d", &account_info.PIN);
+    fscanf(account, "%f", &account_info.Balance);
+    fscanf(account, "%d", &account_info.acc_no);
+    fclose(account);
 
     // Validate PIN
-    // Open the Account file for Verifications- PIN
-    char Accountfile_path[1024];
-    sprintf(Accountfile_path, "%s/Database/%s.txt", current_directory, account_deposit);
-
-    FILE *accountfile;
-    accountfile = fopen(Accountfile_path, "r");
-
-    
-    fgets(account_info.name, 1024, accountfile); // reads the names of the account name
-    account_info.name[strcspn(account_info.name, "\n")] = '\0'; // Removes the newline character
-
-    // Reads information the Account Files and Stores in struct
-    fscanf(accountfile, "%d", &account_info.ID);
-    fscanf(accountfile, "%d", &account_info.acc_type);
-    fscanf(accountfile, "%d", &account_info.PIN);
-    fscanf(accountfile, "%f", &account_info.Balance);
-    fscanf(accountfile, "%d", &account_info.acc_no);
-    fclose(accountfile);
-
-    // Checks the PIN
-    int user_PIN;
-    while(1)
-    {
-        printf("PIN: ");
-        
-        if (scanf("%d", &user_PIN) == 1) // Checks the PIN is Integer
-        {
-            if (user_PIN >= 1000 && user_PIN <= 9999) // Ensures the input is 4 digits
-            {
-                if (user_PIN == account_info.PIN) // If the 4 digits of input and account ID matches, breaks the inifinte loop
-                {
-                    break;
-                    
-                }
-                else
-                {
-                    printf("Invalid PIN\n");
-                }
-            }
-            else
-            {
-                printf("Must 4 digits\n");
-            }
-        }
-        else
-        {
-            printf("PIN must be Numbers\n");
-        }
-        clear_input();
-    }
+    int user_PIN = valid_PIN(account_withdraw);
     printf("--------------------------------\n");
     printf("Available Balance: %.3f\n", account_info.Balance);// Show Balance
     printf("--------------------------------\n");
@@ -745,7 +697,7 @@ void Withdrawal()
     // Write Back to the Account File
     // Open the Account File
     char account_path[1024];
-    snprintf(account_path, sizeof(account_path),"%s/Database/%s.txt", current_directory, account_deposit);  // account_deposit contains the account number string
+    snprintf(account_path, sizeof(account_path),"%s/Database/%s.txt", current_directory, account_withdraw);  // account_deposit contains the account number string
 
     FILE *account_file;
     account_file = fopen(account_path, "w"); // Overwrites all the data
@@ -764,11 +716,11 @@ void Withdrawal()
 
 void Remittance()
 {
+    acc_details sender_info;
+    acc_details reciever_info;
     printf("\n            Remittance        \n");
     printf("--------------------------------\n");
-    // Show Existing Account
-    printf("        Existing Account:       \n");
-    // Gets Current Directory address to access Index.txt
+    printf("Select Sender Account: \n");
     char current_directory[1024];
     strcpy(current_directory, current_working_directory());
 
@@ -780,41 +732,176 @@ void Remittance()
     char existing_account[1024][16]; // 2D array to store 1024 Accounts of 7 Characters + Null terminator
     int account_count = 0;
 
-    FILE *index_read_ptr;
-    index_read_ptr = fopen(Indexfile_read_path, "r");
+    FILE *index_ptr;
+    index_ptr = fopen(Indexfile_read_path, "r");
 
     // Loop to Read and Display all the current Acccount
-    while (fgets(file_end, sizeof(file_end), index_read_ptr) != NULL) // Runs until the Files is empty
+    while (fgets(file_end, sizeof(file_end), index_ptr) != NULL) // Runs until the Files is empty
     {
         file_end[strcspn(file_end, "\n")] = 0; // Removes the newline Character
         strcpy(existing_account[account_count], file_end);
         printf("%d. %s\n", account_count + 1, existing_account[account_count]);
         account_count++;
     }
-    fclose(index_read_ptr);
+    fclose(index_ptr);
     printf("--------------------------------\n");
 
     // Continue Prompt to Enter Correct Account
-    int account_found = 0;
-    char account_deposit[16];
-    while (!account_found)
+    int account_found0 = 0;
+    char sender_account[16];
+    while (!account_found0)
     {
-        printf("Please Select Account to Withdraw: ");
-        scanf("%15s", account_deposit);
+        printf("Please Select Sender Account: ");
+        scanf("%15s", sender_account);
 
         for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
         {
-            if (strcmp(account_deposit, existing_account[i]) == 0) // If the account matches; breaks
+            if (strcmp(sender_account, existing_account[i]) == 0) // If the account matches; breaks
             {
-                account_found = 1;
+                account_found0 = 1;
             }
         }
-        if (!account_found) // If didnt find account in existing_account array
+        if (!account_found0) // If didnt find account in existing_account array
         {
             printf("Account Not Found\n");
         }
         clear_input();
     }
+    char senderaccountpath[1024];
+    snprintf(senderaccountpath, 1024, "%s/Database/%s.txt", current_directory, sender_account);
+
+    FILE *sendaccount;
+    sendaccount = fopen(senderaccountpath, "r");
+    fgets(sender_info.name, sizeof(sender_info.name), sendaccount);
+    sender_info.name[strcspn(sender_info.name, "\n")] = 0;
+    fscanf(sendaccount, "%d", &sender_info.ID);
+    fscanf(sendaccount, "%d", &sender_info.acc_type);
+    fscanf(sendaccount, "%d", &sender_info.PIN);
+    fscanf(sendaccount, "%f", &sender_info.Balance);
+    fscanf(sendaccount, "%d", &sender_info.acc_no);
+    fclose(sendaccount);
+
+    // Validate PIN
+    int user_PIN = valid_PIN(sender_account);
+    printf("--------------------------------\n");
+    printf("Available Balance: %.3f\n", sender_info.Balance);// Show Balance
+    printf("--------------------------------\n");
+
+    // Loop to Ensure the amount is valid and has enough money to withdraw
+    int amount_valid = 0;
+    float amount_withdraw;
+    while(!amount_valid)
+    {
+        printf("Enter Amount to Send: ");
+        if (scanf("%f", &amount_withdraw) == 1)
+        {
+            if (amount_withdraw > 0) // Valid the amount cant be negative
+            {
+                if (amount_withdraw <= sender_info.Balance) // Ensures the amount to withdraw is than the account balance
+                {
+                    amount_valid = 1;
+                }
+                else
+                {
+                    printf("Not Enough Balance\n");
+                }
+            }
+            else
+            {
+                printf("Amount Can't be Negative\n");
+            }
+            
+        }
+        else
+        {
+            printf("Enter Numbers\n");
+        }
+        clear_input();
+    }
+
+    int account_found1 = 0;
+    char reciever_account[16];
+    while (!account_found1)
+    {
+        printf("Please Select Reciever Account: ");
+        scanf("%15s", reciever_account);
+        if (strcmp(sender_account, reciever_account) == 0)
+        {
+            printf("Cant be Same Account\n");
+            continue;
+        }
+        for (int i = 0; i < account_count; i++) // Compares all the exisiting_account array
+        {
+            if (strcmp(reciever_account, existing_account[i]) == 0) // If the account matches; breaks
+            {
+                account_found1 = 1;
+            }
+        }
+        if (!account_found1) // If didnt find account in existing_account array
+        {
+            printf("Account Not Found\n");
+        }
+        clear_input();
+    }
+    // Open reciever Account
+    char recieveaccountpath[1024];
+    snprintf(recieveaccountpath, 1024, "%s/Database/%s.txt", current_directory, reciever_account);
+
+    FILE *recieveaccount;
+    recieveaccount = fopen(recieveaccountpath, "r");
+    fgets(reciever_info.name, sizeof(reciever_info.name), recieveaccount);
+    reciever_info.name[strcspn(reciever_info.name, "\n")] = '\0';
+    fscanf(recieveaccount, "%d", &reciever_info.ID);
+    fscanf(recieveaccount, "%d", &reciever_info.acc_type);
+    fscanf(recieveaccount, "%d", &reciever_info.PIN);
+    fscanf(recieveaccount, "%f", &reciever_info.Balance);
+    fscanf(recieveaccount, "%d", &reciever_info.acc_no);
+    fclose(recieveaccount);
+    // Account Balance Charges
+    if (sender_info.acc_type == 1 && reciever_info.acc_type == 2)
+    {
+        sender_info.Balance = sender_info.Balance - (amount_withdraw * 1.02);
+    }
+    else if (sender_info.acc_type == 2 && reciever_info.acc_type == 1)
+    {
+        sender_info.Balance = sender_info.Balance - (amount_withdraw * 1.03);
+    }
+    reciever_info.Balance += amount_withdraw;
+
+
+    // Sender File write
+    FILE *send_write;
+    send_write = fopen(senderaccountpath, "w");
+    fprintf(send_write, "%s\n", sender_info.name);
+    fprintf(send_write, "%d\n",sender_info.ID);
+    fprintf(send_write, "%d\n",sender_info.acc_type);
+    fprintf(send_write, "%d\n",sender_info.PIN);
+    fprintf(send_write, "%.3f\n",sender_info.Balance);
+    fprintf(send_write, "%d\n",sender_info.acc_no);
+    fclose(send_write);
+
+    // Reciever File Write
+    char reciever_path[1024];
+    snprintf(reciever_path, 1024, "%s/Database/%s.txt", current_working_directory(), reciever_account);
+    FILE *recieve_write;
+    recieve_write = fopen(reciever_path, "w");
+    fprintf(recieve_write, "%s\n", reciever_info.name);
+    fprintf(recieve_write, "%d\n",reciever_info.ID);
+    fprintf(recieve_write, "%d\n",reciever_info.acc_type);
+    fprintf(recieve_write, "%d\n",reciever_info.PIN);
+    fprintf(recieve_write, "%.3f\n",reciever_info.Balance);
+    fprintf(recieve_write, "%d\n",reciever_info.acc_no);
+    fclose(recieve_write);
+
+    printf("--------------------------------\n");
+    printf("        Sender Information:     \n");
+    printf("Name: %s\n", sender_info.name);
+    printf("Account: %d\n", sender_info.acc_no);
+    printf("Balance: %.3f\n", sender_info.Balance);
+    printf("        Reciever Information:     \n");
+    printf("Name: %s\n", reciever_info.name);
+    printf("Account: %d\n", reciever_info.acc_no);
+    printf("Balance: %.3f\n", reciever_info.Balance);
 }
 
 
