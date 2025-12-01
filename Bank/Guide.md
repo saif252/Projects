@@ -1,4 +1,4 @@
-### Overview of the Program
+#### Overview of the Program
 
 This program is a **console-based banking management system written in C**.
 
