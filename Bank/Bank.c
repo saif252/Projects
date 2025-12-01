@@ -9,7 +9,7 @@ typedef struct account_details
 {
     char name[1024];
     int ID;
-    int acc_type; // 1 - Saving, 2 - Current // Should have used enum but really used to enums for now,
+    int acc_type; // 1 - Saving, 2 - Current Should have used enum but dont know how to use enums
     int PIN;
     float Balance;
     int acc_no;
@@ -29,6 +29,7 @@ void path_builder(char *Store, const char *file_open)
     snprintf(Store, 1024, "%s/Database/%s", current_working_directory(), file_open);
 }
 
+// Function to clear input buffer
 void clear_input() {
     int clear;
     while ((clear = getchar()) != '\n' && clear != EOF);
@@ -263,6 +264,7 @@ void Create()
     printf("------------------------------------\n");
 }
 
+// Helper Function to Validate Pin
 int valid_PIN(const char *account_no)
 {
     acc_details account;
