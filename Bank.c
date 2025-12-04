@@ -127,9 +127,22 @@ void Create()
     printf("------------------------------------\n");
 
     // Name
-    printf("Enter Name: ");
-    fgets(account.name, sizeof(account.name), stdin); // Takes input from User even spaces
-    account.name[strcspn(account.name, "\n")] = '\0'; //  Removes the newline character
+    int name_valid = 0;
+    while (!name_valid)
+    {
+        printf("Enter Name: ");
+        fgets(account.name, sizeof(account.name), stdin); // Takes input from User even spaces
+        account.name[strcspn(account.name, "\n")] = '\0'; //  Removes the newline character
+        if (strlen(account.name) > 0 && strspn(account.name, " ") != strlen(account.name)) // Checks the length of the name is greater than 0 and not only spaces
+        {
+            name_valid = 1;
+        }
+        else
+        {
+            printf("Cant Be NUll Input\n");
+        }
+    }
+    
 
     // ID
     int user_ID[50];
