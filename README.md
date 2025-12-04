@@ -1,6 +1,6 @@
 # Overview of the Program
 
-This program is a **console-based banking management system written in C**.
+This program is a **console-based banking management system written in C for windows**.
 
 All account data is saved locally inside a folder called **Database**, and each account has its own file.
 
