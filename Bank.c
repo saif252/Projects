@@ -763,9 +763,7 @@ void Remittance()
 
     printf("--------------------------------\n");
 
-    /* ------------------------------
-       SELECT SENDER ACCOUNT
-    -------------------------------- */
+    /// CHoose sender acc
     char sender_account[16];
     int account_found = 0;
 
@@ -788,7 +786,7 @@ void Remittance()
         clear_input();
     }
 
-    /* Read sender account data */
+    // Read sender acc
     char sender_path[1024];
     snprintf(sender_path, 1024, "%s/Database/%s.txt", current_directory, sender_account);
 
@@ -810,16 +808,14 @@ void Remittance()
 
     fclose(fp_sender);
 
-    /* Validate PIN */
+    // Validate PIN 
     valid_PIN(sender_account);
 
     printf("--------------------------------\n");
     printf("Available Balance: %.3f\n", sender_info.Balance);
     printf("--------------------------------\n");
 
-    /* ------------------------------
-       SELECT RECEIVER ACCOUNT
-    -------------------------------- */
+    // Choose reciever account
     char reciever_account[16];
     account_found = 0;
 
@@ -850,7 +846,7 @@ void Remittance()
         clear_input();
     }
 
-    /* Read receiver account data */
+    // Read receiver account data 
     char receiver_path[1024];
     snprintf(receiver_path, 1024, "%s/Database/%s.txt", current_directory, reciever_account);
 
@@ -872,9 +868,8 @@ void Remittance()
 
     fclose(fp_receiver);
 
-    /* ------------------------------
-       AMOUNT VALIDATION (after reading both accounts!)
-    -------------------------------- */
+   
+    // AMOUNT VALIDATION
     float amount, total_deduction;
 
     while (1)
@@ -893,7 +888,7 @@ void Remittance()
             continue;
         }
 
-        /* Fee calculation */
+        // Fee calc
         if (sender_info.acc_type == 1 && reciever_info.acc_type == 2)
             total_deduction = amount * 1.02; // Saving → Current = 2%
         else if (sender_info.acc_type == 2 && reciever_info.acc_type == 1)
@@ -914,13 +909,11 @@ void Remittance()
         clear_input();
     }
 
-    /* Apply deductions */
+    // Fee deduct
     sender_info.Balance -= total_deduction;
     reciever_info.Balance += amount;
 
-    /* ------------------------------
-       WRITE UPDATED SENDER FILE
-    -------------------------------- */
+    // Write sender acc
     fp_sender = fopen(sender_path, "w");
     fprintf(fp_sender, "%s\n", sender_info.name);
     fprintf(fp_sender, "%d\n", sender_info.ID);
@@ -930,9 +923,7 @@ void Remittance()
     fprintf(fp_sender, "%d\n", sender_info.acc_no);
     fclose(fp_sender);
 
-    /* ------------------------------
-       WRITE UPDATED RECEIVER FILE
-    -------------------------------- */
+    // Write reciever acc
     fp_receiver = fopen(receiver_path, "w");
     fprintf(fp_receiver, "%s\n", reciever_info.name);
     fprintf(fp_receiver, "%d\n", reciever_info.ID);
@@ -942,9 +933,7 @@ void Remittance()
     fprintf(fp_receiver, "%d\n", reciever_info.acc_no);
     fclose(fp_receiver);
 
-    /* ------------------------------
-       PRINT FINAL RESULT
-    -------------------------------- */
+    // Print information
     printf("--------------------------------\n");
     printf("       Transfer Successful\n");
     printf("--------------------------------\n");
